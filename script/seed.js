@@ -1,6 +1,8 @@
 'use strict'
 
-const {db, models: {User} } = require('../server/db')
+const axios = require('axios')
+const {db, models: {User, Movie} } = require('../server/db')
+require('dotenv').config();
 
 /**
  * seed - this function clears the database, updates tables to
@@ -16,13 +18,22 @@ async function seed() {
     User.create({ username: 'murphy', password: '123' }),
   ])
 
-  console.log(`seeded ${users.length} users`)
-  console.log(`seeded successfully`)
-  return {
-    users: {
-      cody: users[0],
-      murphy: users[1]
+  const getMovies = async (page) => {
+    const api = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${process.env.MOVIES_API}&page=${page}&vote_average.gte=7&vote_average.lte=10`;
+    const { data } = await axios.get(api);
+    for (const { title, vote_average, release_date, overview, poster_path } of data.results) {
+      await Movie.create({
+        name: title,
+        voteAverage: vote_average,
+        releaseDate: release_date,
+        overview: overview,
+        imageUrl: `https://image.tmdb.org/t/p/w1280${poster_path}`,
+      });
     }
+  };
+
+  for (let i = 1; i < 30; i++) {
+    await getMovies(i);
   }
 }
 

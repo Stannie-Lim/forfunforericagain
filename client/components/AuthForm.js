@@ -2,6 +2,8 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {authenticate} from '../store'
 
+import { TextField } from '@material-ui/core';
+
 /**
  * COMPONENT
  */
@@ -11,18 +13,8 @@ const AuthForm = props => {
   return (
     <div>
       <form onSubmit={handleSubmit} name={name}>
-        <div>
-          <label htmlFor="username">
-            <small>Username</small>
-          </label>
-          <input name="username" type="text" />
-        </div>
-        <div>
-          <label htmlFor="password">
-            <small>Password</small>
-          </label>
-          <input name="password" type="password" />
-        </div>
+        <TextField variant="outlined" name="username" type="text" label="Username" />
+        <TextField variant="outlined" name="password" type="password" label="Password" />
         <div>
           <button type="submit">{displayName}</button>
         </div>
